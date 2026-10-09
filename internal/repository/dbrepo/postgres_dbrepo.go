@@ -22,14 +22,19 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 	defer cancel()
 
 	query := `
-		SELECT
-			id, title, description, year, release_date, runtime, rating,
-			mpaa_rating, COALESCE(image, ''), created_at, updated_at
-		FROM		
-			movies
-		ORDER BY
-			title
-	`
+        SELECT
+        id,
+        title,
+        description,
+        EXTRACT(YEAR FROM release_date)::int,
+        runtime,
+        mpaa_rating,
+        COALESCE(image, ''),
+        created_at,
+        updated_at
+    FROM movies
+    ORDER BY title
+    `
 
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
@@ -41,6 +46,7 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 
 	for rows.Next() {
 		var movie models.Movie
+
 		err := rows.Scan(
 			&movie.ID,
 			&movie.Title,
@@ -55,6 +61,7 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		movies = append(movies, &movie)
 	}
 
