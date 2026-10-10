@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 )
 
@@ -26,4 +27,28 @@ func (app *application) AllMovies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = app.writeJSON(w, http.StatusOK, movies)
+}
+
+func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
+	//read JSON payload
+	//validate user gainst DB
+	//check passsword
+	//creare JWT user
+
+	u := &jwtUser{
+		ID:        1,
+		FirstName: "Admin",
+		LastName:  "User",
+	}
+
+	//genereate tokens
+	tokens, err := app.auth.GenerateTokenPair(u)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	log.Println("Generated tokens:", tokens.Token)
+
+	w.Write([]byte(tokens.Token))
 }
