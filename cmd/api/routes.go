@@ -18,6 +18,10 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/authenticate", app.authenticate)
 
+	mux.Get("/movies/{id}", app.GetMovie)
+	mux.Post("/movies", app.CreateMovie)
+	mux.Patch("/movies/{id}", app.UpdateMovie)
+	mux.Delete("/movies/{id}", app.DeleteMovie)
 	mux.Get("/movies", app.AllMovies)
 
 	return mux
